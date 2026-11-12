@@ -1,0 +1,33 @@
+name: Update injuries
+on:
+  schedule:
+    - cron: '*/15 * * * *' # GitHub may delay scheduled runs by a few minutes
+  workflow_dispatch: {} # run manually from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: injuries
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/injuries.mjs
+      - name: Commit if changed
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "injury-bot"
+            git config user.email "injury-bot@users.noreply.github.com"
+            git add injuries.json sleeper-map.json
+            git commit -m "injuries: $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase
+            git push
+          fi
