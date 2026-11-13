@@ -14,7 +14,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,7 +22,8 @@ jobs:
           node-version: 22
       - run: node scripts/injuries.mjs
       - run: node scripts/trending.mjs
-      - run: node scripts/projections.mjs
+      - run: node scripts/projections.mjs # Sleeper, kept for comparison
+      - run: node scripts/projections-model.mjs # our nflverse model -> projections.json
       - name: Commit if changed
         run: |
           if [ -n "$(git status --porcelain)" ]; then
