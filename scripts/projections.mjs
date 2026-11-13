@@ -1,9 +1,9 @@
-// Builds projections.json: Sleeper's half-PPR projections for the current NFL week.
+// Builds sleeper-projections.json (kept for comparison; the app now uses our own model in projections.json): Sleeper's half-PPR projections for the current NFL week.
 // Uses Sleeper's official /v1/state endpoint for the week, then the (unofficial) projections endpoint.
 // On any failure the existing file is left untouched.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
-const OUT_FILE = 'projections.json';
+const OUT_FILE = 'sleeper-projections.json';
 const POS = ['QB', 'RB', 'WR', 'TE', 'K', 'DEF']; // D/ST player ids are team codes (e.g. "KC")
 
 async function getJson(url) {
@@ -37,7 +37,7 @@ try {
     console.log('No changes.');
   } else {
     writeFileSync(OUT_FILE, JSON.stringify({ season, week, fetchedAt: new Date().toISOString(), proj }));
-    console.log(`projections.json: ${season} week ${week}, ${Object.keys(proj).length} players`);
+    console.log(`sleeper-projections.json: ${season} week ${week}, ${Object.keys(proj).length} players`);
   }
 } catch (e) {
   console.warn('Projections update skipped:', e.message);
